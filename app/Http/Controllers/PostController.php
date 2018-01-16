@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Post;
 use Auth;
 use Session;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class PostController extends Controller {
 
@@ -19,7 +21,12 @@ class PostController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $posts = Post::orderby('id', 'desc')->paginate(5); //show only 5 items at a time in descending order
+
+        //$posts = Post::orderby('id', 'desc')->paginate(5); //show only 5 items at a time in descending order
+
+        $posts = Post::select('posts.id', 'posts.title', 'posts.body', 'users.name')
+                ->join('users', 'posts.user_id', '=', 'users.id')
+                ->paginate(5);
 
         return view('posts.index', compact('posts'));
     }
@@ -64,8 +71,9 @@ class PostController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        $post = Post::findOrFail($id); //Find post of id = $id
 
+        $post = Post::findOrFail($id); //Find post of id = $id
+        
         return view('posts.show', compact('post'));
     }
 

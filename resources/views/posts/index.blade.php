@@ -8,8 +8,9 @@
                     <div class="panel-heading">Page {{ $posts->currentPage() }} of {{ $posts->lastPage() }}</div>
                     @foreach ($posts as $post)
                         <div class="panel-body">
+                           
                             <li style="list-style-type:disc">
-                                <a href="{{ route('posts.show', $post->id ) }}"><b>{{ $post->title }}</b><br>
+                                <a href="{{ route('posts.show', $post->id ) }}"><b>{{ $post->title }}</b>&nbsp;&nbsp;<i>{{$post->name}}</i><br>
                                     <p class="teaser">
                                        {{  str_limit($post->body, 100) }} {{-- Limit teaser to 100 characters --}}
                                     </p>
