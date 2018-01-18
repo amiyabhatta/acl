@@ -11,10 +11,14 @@ use Spatie\Permission\Models\Permission;
 //Enables us to output flash messaging
 use Session;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+
 class UserController extends Controller {
 
     public function __construct() {
-        $this->middleware(['auth', 'isAdmin']); //isAdmin middleware lets only users with a //specific permission permission to access these resources
+        //$this->middleware(['auth', 'isAdmin']); //isAdmin middleware lets only users with a //specific permission permission to access these resources
+    
     }
 
     /**
@@ -139,5 +143,34 @@ class UserController extends Controller {
         return redirect()->route('users.index')
                         ->with('flash_message', 'User successfully deleted.');
     }
-
+    
+    
+    /**
+     * Login by jwt
+     * 
+     * @param Request $request
+     * @return type json
+     */
+    public function login(Request $request){
+       
+        $credentials = $request->only('email', 'password');
+        $token = null;
+        try {
+           if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json(['invalid_email_or_password'], 422);
+           }
+        } catch (JWTAuthException $e) {
+            return response()->json(['failed_to_create_token'], 500);
+        }
+        
+       
+        
+        return response()->json(compact('token')); 
+    }
+    
+    public function getAuthUser(Request $request){
+        $user = JWTAuth::toUser($request->token);
+        return response()->json(['result' => $user , 'Status' => 200]);
+    }
+    
 }

@@ -29,3 +29,11 @@ Route::resource('roles', 'RoleController');
 Route::resource('permissions', 'PermissionController');
 
 Route::resource('posts', 'PostController');
+
+
+/* ======================== JWT TOKEN EXAMPLE ========================= */
+Route::post('auth/register', 'UserController@register');
+Route::post('auth/login', 'UserController@login');
+Route::group(['middleware' => 'jwt.auth'], function () {
+    Route::get('user', 'UserController@getAuthUser');
+});
